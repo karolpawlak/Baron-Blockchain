@@ -8,10 +8,11 @@ class Blockchain:
 
         self.transactions = []
         self.chain = []
-        self.create_block()
+        self.create_block(0, '00')  # genesis block creation
 
+    # add a block of transactions to the blockchain
     def create_block(self, nonce, previous_hash):
-        # create a block of transactions
+
         block = {'block_number': len(self.chain) + 1,
                  'timestamp': time(),
                  'transactions': self.transactions,
@@ -22,6 +23,9 @@ class Blockchain:
         # reset transactions
         self.transactions = []
 
+        # append a block
+        self.chain.append(block)
+
 
 # init
 blockchain = Blockchain()
@@ -30,9 +34,9 @@ blockchain = Blockchain()
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def index():
-    return render_template('./index.html')
+    return render_template("./index.html")
 
 # def print_hi(name):
 #     print(f'Hi, {name}')
@@ -40,7 +44,7 @@ def index():
 #
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
