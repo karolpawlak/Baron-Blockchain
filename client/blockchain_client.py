@@ -1,18 +1,27 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, request, jsonify
 
 import Cryptodome
 import Cryptodome.Random
-from Cryptodome.PublicKey import RSA
-
 import binascii
+from Cryptodome.PublicKey import RSA
+from collections import OrderedDict
+
 
 class Transaction:
-    def __init__(self, sender_address, sender_private_key, receiver_address, value):
+    def __init__(self, sender_address, sender_private_key, recipient_address, amount):
 
         self.sender_address = sender_address
         self.sender_private_key = sender_private_key
-        self.receiver_address = receiver_address
-        self.value = value
+        self.recipient_address = recipient_address
+        self.amount = amount
+
+    def to_dictionary(self):
+        return OrderedDict({
+            'sender_address': self.sender_address,
+            'sender_private_key': self.sender_private_key,
+            'recipient_address': self.recipient_address,
+            'amount': self.amount
+        })
 
 
 app = Flask(__name__)
@@ -29,8 +38,24 @@ def view_transactions():
 
 
 @app.route("/transactions/new")
-def create_transaction():
+def new_transaction():
     return render_template("./make_transaction.html")
+
+
+@app.route("/transactions/generate", methods=['POST'])
+def generate_transaction():
+    sender_address = request.form['sender_address']
+    sender_private_key = request.form['sender_private_key']
+    recipient_address = request.form['recipient_address']
+    amount = request.form['amount']
+
+    new_transaction = Transaction(sender_address, sender_private_key, recipient_address, amount)
+    response = {
+        'transaction': new_transaction.to_dictionary(),
+        'signature': "signature"
+    }
+
+    return jsonify(response), 201
 
 
 @app.route("/wallet/new")
@@ -40,8 +65,8 @@ def new_wallet():
     public_key = private_key.public_key()
 
     response = {
-        'public_key': binascii.hexlify(private_key.export_key(format('DER'))).decode('ascii'),
-        'private_key': binascii.hexlify(public_key.export_key(format('DER'))).decode('ascii')
+        'public_key': binascii.hexlify(public_key.export_key(format('DER'))).decode('ascii'),
+        'private_key': binascii.hexlify(private_key.export_key(format('DER'))).decode('ascii')
     }
 
     return jsonify(response), 200

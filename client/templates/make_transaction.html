@@ -12,6 +12,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/vendor/DataTables/css/datatables.min.css" rel="stylesheet">
     <link href="/static/css/custom.css" rel="stylesheet">
 
 </head>
@@ -26,6 +27,7 @@
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
@@ -221,6 +223,8 @@
 <!-- Bootstrap core JavaScript -->
 <script src="/static/vendor/jquery/jquery.min.js"></script>
 <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/vendor/DataTables/js/datatables.min.js"></script>
+<script src="/static/vendor/DataTables/js/ellipsis.js"></script>
 
 
 <script>
@@ -229,18 +233,18 @@
         $("#generate_transaction").click(function () {
 
             $.ajax({
-                url: "/generate/transaction",
+                url: "/transactions/generate",
                 type: "POST",
                 dataType: 'json',
                 data: $('#transaction_form').serialize(),
                 success: function (response) {
-
-                    document.getElementById("confirmation_sender_address").value = response["transaction"]["sender_address"];
+                    console.log(response);
+                    {#document.getElementById("confirmation_sender_address").value = response["transaction"]["sender_address"];
                     document.getElementById("confirmation_recipient_address").value = response["transaction"]["recipient_address"];
-                    document.getElementById("confirmation_amount").value = response["transaction"]["value"];
+                    document.getElementById("confirmation_amount").value = response["transaction"]["amount"];
                     document.getElementById("transaction_signature").value = response["signature"];
 
-                    $("#basicModal").modal('show');
+                    $("#basicModal").modal('show');#}
 
                 },
                 error: function (error) {
